@@ -1,0 +1,59 @@
+* Thunderbird native message extension server
+
+
+orignal readme is bellow
+* Native Messaging Example
+
+This example demonstrates communication between a WebExtension and a native application using native messaging.
+
+** Overview
+
+- The WebExtension (in the "add-on" directory) connects to the native application and sends/receives messages.
+- Clicking the WebExtension's browser action sends a "ping" message.
+- The native application (in the "app" directory), written in Python, responds with a "pong" message.
+
+** Setup
+
+*** Linux/macOS
+
+0. (macOS) Place the extension outside Desktop, Documents, or Downloads due to macOS access restrictions.
+
+1. Ensure Python 3 is installed and in your PATH.
+   #+BEGIN_SRC bash
+   which python3
+   #+END_SRC
+   - If not found, install Python 3. See:
+     - [[https://docs.python.org/3/using/unix.html][Using Python on Unix platforms (Linux)]]
+     - [[https://docs.python.org/3/using/mac.html][Using Python on a Mac (macOS)]]
+   - Restart Firefox after modifying PATH.
+
+2. Grant execute permission to `app/ping_pong.py`.
+   - See [[https://www.redhat.com/sysadmin/linux-file-permissions-explained][RedHat's article on file permissions]].
+
+3. Update the `"path"` field in `app/ping_pong.json` with the full path to `app/ping_pong.py`.
+   #+BEGIN_SRC json
+   "path": "/path/to/your/webextensions-examples/native-messaging/app/ping_pong.py"
+   #+END_SRC
+
+4. Copy `app/ping_pong.json` to the correct location. See:
+   - [[https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_manifests#linux][Linux manifest location]]
+   - [[https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_manifests#macos][macOS manifest location]]
+   - [[https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Native_manifests#Manifest_location][App manifest location]]
+
+** Testing
+
+1. Install the add-on:
+   - Go to `about:debugging#/runtime/this-firefox` (or "This Firefox" in `about:debugging`).
+   - Click "Load Temporary Add-on" and select the add-on's `manifest.json`.
+
+2. Open the extension's console using the "Inspect" button.
+
+3. Click the new browser action icon in the toolbar.
+
+4. Check the console for output similar to:
+   #+BEGIN_EXAMPLE
+   Sending: ping
+   Received: pong
+   #+END_EXAMPLE
+
+5. If you encounter issues, consult the [[https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Native_messaging#Troubleshooting][Troubleshooting guide]].
