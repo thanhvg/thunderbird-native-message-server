@@ -101,3 +101,7 @@ srv -> tb: stdout: mid:123
      |client|          |server|          |thunderbird|
      `------'          `------'          `-----------'
 #+end_example
+* problems
+- native app manifest must be declared with full path ~/ work work
+- thunderbird won't close native app propperly
+- python load path is crap must use bash
