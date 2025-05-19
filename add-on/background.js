@@ -33,6 +33,6 @@ port.onDisconnect.addListener((port) => {
 When the extension's action icon is clicked, send the app a message.
 */
 browser.browserAction.onClicked.addListener(() => {
-  console.log("Sending:  ping");
-  port.postMessage("ping");
+  console.log("Sending:  exit request");
+  port.postMessage("exit");
 });
