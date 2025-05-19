@@ -46,15 +46,11 @@ def process_stdin(message_queue):
                     encoded_message = encode_message(error_data)
                     send_message(encoded_message)
 
-
             else:
                 # Default stdin handling: Echo back the received message.
                 response_data = {"status": "received", "message": message}
                 encoded_message = encode_message(response_data)
                 send_message(encoded_message)
-
-
-
 
         except Exception as e:
             # Handle potential errors during message processing or encoding
