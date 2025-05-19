@@ -2,6 +2,8 @@
 :CATEGORY: thunderbird-native-messaging-server
 :END:
 * note
+#+begin_src js
+
 // The user clicked our button, get the active tab in the current window using
 // the tabs API.
 let tabs = await messenger.tabs.query({ active: true, currentWindow: true });
@@ -20,6 +22,7 @@ document.getElementById("from").textContent = message.author;
 let full = await messenger.messages.getFull(message.id);
 // document.getElementById("received").textContent = full.headers.received[0];
 document.getElementById("received").textContent = JSON.stringify(message);
+
 // message = 
 // {
 //    "author" : "Indigo <email@indigo.ca>",
@@ -63,3 +66,38 @@ document.getElementById("received").textContent = JSON.stringify(message);
 //             messenger.messages.update(messageHeader.id, {
 // read: false,
 //             });
+
+#+end_src
+
+* arc
+
+td <-> srv <-> client
+
+client 
+
+#+begin_src plantuml :results verbatim
+@startuml
+participant "client" as client 
+participant "server" as srv 
+participant "thunderbird" as tb 
+
+client -> srv: mid:123
+srv -> tb: stdout: mid:123
+@enduml
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+     ,------.          ,------.          ,-----------.
+     |client|          |server|          |thunderbird|
+     `--+---'          `--+---'          `-----+-----'
+        |     mid:123     |                    |      
+        | ---------------->                    |      
+        |                 |                    |      
+        |                 |  stdout: mid:123   |      
+        |                 | ------------------>|      
+     ,--+---.          ,--+---.          ,-----+-----.
+     |client|          |server|          |thunderbird|
+     `------'          `------'          `-----------'
+#+end_example

@@ -1,8 +1,11 @@
 /*
 On startup, connect to the "ping_pong" app.
 */
-let port = browser.runtime.connectNative("ping_pong");
+let port = browser.runtime.connectNative("tb_srv");
+// let port = browser.runtime.connectNative("tb_nt_msg_srv");
+// let port = browser.runtime.connectNative("ping_pong");
 
+console.log("starting: " + port);
 /*
 Listen for messages from the app and log them to the console.
 */

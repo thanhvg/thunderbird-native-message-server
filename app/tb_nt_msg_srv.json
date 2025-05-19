@@ -1,0 +1,7 @@
+{
+  "name": "tb_nt_msg_srv",
+  "description": "example host for native messaging",
+  "path": "/home/thanh/git/thunderbird-native-message-server/app/tb_nt_msg_srv.py",
+  "type": "stdio",
+  "allowed_extensions": [ "thanh@example.org" ]
+}

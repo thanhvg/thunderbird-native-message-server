@@ -4,6 +4,8 @@ import sys
 import json
 import struct
 
+# from app.tb_nt_msg_srv import main
+
 # Read a message from stdin and decode it.
 def getMessage():
     rawLength = sys.stdin.buffer.read(4)
@@ -30,6 +32,7 @@ def sendMessage(encodedMessage):
     sys.stdout.buffer.write(encodedMessage['content'])
     sys.stdout.buffer.flush()
 
+# main()
 while True:
     receivedMessage = getMessage()
     if receivedMessage == "ping":

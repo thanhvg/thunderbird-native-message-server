@@ -13,15 +13,15 @@ def get_messsage():
     return json.loads(message)
 
 # Encode a message for transmission, given its content.
-def encode_message(messageContent):
-    encodedContent = json.dumps(messageContent, separators=(',', ':')).encode('utf-8')
-    encodedLength = struct.pack('@I', len(encodedContent))
-    return {'length': encodedLength, 'content': encodedContent}
+def encode_message(message_content):
+    encoded_content = json.dumps(message_content, separators=(',', ':')).encode('utf-8')
+    encoded_length = struct.pack('@I', len(encoded_content))
+    return {'length': encoded_length, 'content': encoded_content}
 
 # Send an encoded message to stdout
-def send_message(encodedMessage):
-    sys.stdout.buffer.write(encodedMessage['length'])
-    sys.stdout.buffer.write(encodedMessage['content'])
+def send_message(encoded_message):
+    sys.stdout.buffer.write(encoded_message['length'])
+    sys.stdout.buffer.write(encoded_message['content'])
     sys.stdout.buffer.flush()
 
 
@@ -57,3 +57,12 @@ def process_stdin(message_queue):
             print(f"Error processing stdin: {e}", file=sys.stderr)
             sys.stderr.flush()  # Crucial to flush stderr too
             break  # Exit the loop
+
+def process_stdout(message_queue):
+    while True:
+        request = message_queue.get();
+        encoded_message = encode_message(request)
+        send_message(encoded_message)
+
+
+    
