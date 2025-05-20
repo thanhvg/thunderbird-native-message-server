@@ -101,7 +101,7 @@ class JSONHandler(http.server.SimpleHTTPRequestHandler):
             #     self.end_headers()
             #     error_message = json.dumps({"error": "Unexpected response from stdin"}).encode('utf-8')
             #     self.wfile.write(error_message)
-            self.message_queue.put(message_id)
+            self.message_queue.put({'type': 'mid', 'payload': message_id})
             return  # important to return after sending the response
         
         # Serve other files as usual

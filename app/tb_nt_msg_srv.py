@@ -48,7 +48,7 @@ def main():
     """Main function to start the web server and stdin processor."""
 
     parser = argparse.ArgumentParser(description="Web server and stdin processor.")
-    parser.add_argument("--port", type=int, default=8000, help="Port for the web server.")
+    parser.add_argument("--port", type=int, default=1337, help="Port for the web server.")
     args = parser.parse_args()
 
     # Shared queue for communication between server and stdin

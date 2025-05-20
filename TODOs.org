@@ -105,3 +105,6 @@ srv -> tb: stdout: mid:123
 - native app manifest must be declared with full path ~/ work work
 - thunderbird won't close native app propperly
 - python load path is crap must use bash
+* update
+messagesUpdate
+https://webextension-api.thunderbird.net/en/beta-mv2/messages.html#permissions
