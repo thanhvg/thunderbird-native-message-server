@@ -108,3 +108,21 @@ srv -> tb: stdout: mid:123
 * update
 messagesUpdate
 https://webextension-api.thunderbird.net/en/beta-mv2/messages.html#permissions
+* emacs
+#+begin_src elisp
+(defun mu4e/thunderbird-mark-as-read (msg)
+  "To set as `mu4e-view-auto-mark-as-read'"
+  (message (format "http://localhost:1337/mid/%s" (mu4e-message-field msg :message-id)))
+  (url-retrieve
+   (format "http://localhost:1337/mid/%s" (mu4e-message-field msg :message-id))
+   (lambda (_status) (kill-buffer (current-buffer)))
+   nil
+   nil)
+  t)
+
+
+(setq mu4e-view-auto-mark-as-read #'mu4e/thunderbird-mark-as-read)
+#+end_src
+
+#+RESULTS:
+: mu4e/thunderbird-mark-as-read

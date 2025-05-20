@@ -13,9 +13,13 @@ Listen for messages from the app and log them to the console.
 port.onMessage.addListener((response) => {
   console.log("Received: " + JSON.stringify(response));
   if (response.type === 'mid') {
-    messenger.messages.query({ headerMessageId: response.playload })
+    messenger.messages.query({ headerMessageId: response.payload })
       .then(result => {
-      result.messages.forEach(msgHeader => messenger.messages.update(msgHeader.id, { read: true, }));
+      result.messages.forEach(msgHeader =>
+        {
+          console.log(msgHeader);
+          messenger.messages.update(msgHeader.id, { read: true, });
+        });
     });
   }
 });
