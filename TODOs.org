@@ -127,6 +127,104 @@ https://webextension-api.thunderbird.net/en/beta-mv2/messages.html#permissions
 
 #+RESULTS:
 : mu4e/thunderbird-mark-as-read
+** getting list of messages
+when email list or search is invoked mu4e--server-filter is called. We can use it to query email status from thunderbird
+
+mu4e--server-filter is the core function and is well documented
+
+
+  "Filter string STR from PROC.
+This processes the \"mu server\" output. It accumulates the
+strings into valid sexpsv and evaluating those.
+
+The server output is as follows:
+
+   1. an error
+      (:error 2 :message \"unknown command\")
+      ;; eox
+   => passed to `mu4e-error-func'.
+
+   2a. a header exp looks something like:
+  (:headers
+      ( ;; message 1
+        :docid 1585
+        :from ((\"Donald Duck\" . \"donald@example.com\"))
+        :to ((\"Mickey Mouse\" . \"mickey@example.com\"))
+        :subject \"Wicked stuff\"
+        :date (20023 26572 0)
+        :size 15165
+        :references (\"200208121222.g7CCMdb80690@msg.id\")
+        :in-reply-to \"200208121222.g7CCMdb80690@msg.id\"
+        :message-id \"foobar32423847ef23@pluto.net\"
+        :maildir: \"/archive\"
+        :path \"/home/mickey/Maildir/inbox/cur/1312_3.32282.pluto,4cd5bd4e9:2,\"
+        :priority high
+        :flags (new unread)
+        :meta <meta-data>
+       )
+       (  .... more messages  )
+)
+;; eox
+   => this will be passed to `mu4e-headers-append-func'.
+
+  2b. After the list of headers has been returned (see 2a.),
+  we'll receive a sexp that looks like
+  (:found <n>) with n the number of messages found. The <n> will be
+  passed to `mu4e-found-func'.
+
+  3. a view looks like:
+  (:view <msg-sexp>)
+  => the <msg-sexp> (see 2.) will be passed to `mu4e-view-func'.
+     the <msg-sexp> also contains :body-txt and/or :body-html
+
+  4. a database update looks like:
+  (:update <msg-sexp> :move <nil-or-t>)
+    like :header
+
+   => the <msg-sexp> (see 2.) will be passed to
+   `mu4e-update-func', :move tells us whether this is a move to
+   another maildir, or merely a flag change.
+
+  5. a remove looks like:
+  (:remove <docid>)
+  => the docid will be passed to `mu4e-remove-func'
+
+  6. a compose looks like:
+  (:compose <reply|forward|edit|new> [:original<msg-sexp>] [:include <attach>])"
+
+mu4e-headers-append-func will do this 
+
+** sync from thunderbird
+docid is not
+mu4e~headers-update-handler
+
+
+mu4e-marks
+
+    (read
+     :char    ("!" . "◼")
+     :prompt "!read"
+     :show-target (lambda (target) "read")
+     :action (lambda (docid msg target) (mu4e--server-move docid nil "+S-u-N")))
+
+mu4e-mark-execute-all
+
+mu4e-mark-execute-pre-hook to update on mark apply
+
+call this and header lists will update the status
+
+#+begin_src elisp
+;; with docid
+(mu4e--server-move 12320 nil "+S-u-N")
+#+end_src
+
+#+begin_src elisp
+;; with message-id
+(mu4e--server-move "01000196ed6b5302-e2c8f4a9-24af-4f7a-a390-2fbd403ca0ea-000000@email.amazonses.com" nil "+S-u-N")
+#+end_src
+
+#+RESULTS:
+
 * TODO query about messages read status
 
 #+begin_src plantuml :results verbatim
@@ -166,3 +264,4 @@ srv -> client: {123: true, 456: false}
      |client|                 |server|                                                  |thunderbird|
      `------'                 `------'                                                  `-----------'
 #+end_example
+
