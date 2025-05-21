@@ -81,25 +81,26 @@ participant "client" as client
 participant "server" as srv 
 participant "thunderbird" as tb 
 
-client -> srv: mid:123
-srv -> tb: stdout: mid:123
+client -> srv: GET mid/123
+srv -> tb: stdout:\n { type: mid, payload: 123 }
 @enduml
 
 #+end_src
 
 #+RESULTS:
 #+begin_example
-     ,------.          ,------.          ,-----------.
-     |client|          |server|          |thunderbird|
-     `--+---'          `--+---'          `-----+-----'
-        |     mid:123     |                    |      
-        | ---------------->                    |      
-        |                 |                    |      
-        |                 |  stdout: mid:123   |      
-        |                 | ------------------>|      
-     ,--+---.          ,--+---.          ,-----+-----.
-     |client|          |server|          |thunderbird|
-     `------'          `------'          `-----------'
+     ,------.           ,------.                    ,-----------.
+     |client|           |server|                    |thunderbird|
+     `---+--'           `---+--'                    `-----+-----'
+         |   GET mid/123    |                             |      
+         |----------------->|                             |      
+         |                  |                             |      
+         |                  |stdout:                      |      
+         |                  | { type: mid, payload: 123 } |      
+         |                  |---------------------------->|      
+     ,---+--.           ,---+--.                    ,-----+-----.
+     |client|           |server|                    |thunderbird|
+     `------'           `------'                    `-----------'
 #+end_example
 * problems
 - native app manifest must be declared with full path ~/ work work
@@ -126,3 +127,42 @@ https://webextension-api.thunderbird.net/en/beta-mv2/messages.html#permissions
 
 #+RESULTS:
 : mu4e/thunderbird-mark-as-read
+* TODO query about messages read status
+
+#+begin_src plantuml :results verbatim
+@startuml
+participant "client" as client 
+participant "server" as srv 
+participant "thunderbird" as tb 
+
+client -> srv: POST /status \n { mids: [123, 345] }
+srv -> tb: stdout:\n { type: 'readStatus', payload: [123, 456] }
+tb -> srv: stdin:\n { type: 'readStatus', payload: {123: true, 456a: false} }
+srv -> client: {123: true, 456: false}
+@enduml
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+     ,------.                 ,------.                                                  ,-----------.
+     |client|                 |server|                                                  |thunderbird|
+     `---+--'                 `---+--'                                                  `-----+-----'
+         | POST /status           |                                                           |      
+         |  { mids: [123, 345] }  |                                                           |      
+         |----------------------->|                                                           |      
+         |                        |                                                           |      
+         |                        |       stdout:                                             |      
+         |                        |        { type: 'readStatus', payload: [123, 456] }        |      
+         |                        |---------------------------------------------------------->|      
+         |                        |                                                           |      
+         |                        |stdin:                                                     |      
+         |                        | { type: 'readStatus', payload: {123: true, 456a: false} } |      
+         |                        |<----------------------------------------------------------|      
+         |                        |                                                           |      
+         |{123: true, 456: false} |                                                           |      
+         |<-----------------------|                                                           |      
+     ,---+--.                 ,---+--.                                                  ,-----+-----.
+     |client|                 |server|                                                  |thunderbird|
+     `------'                 `------'                                                  `-----------'
+#+end_example

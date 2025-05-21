@@ -74,16 +74,18 @@ def main():
 
     # Register the SIGTERM signal handler
     signal.signal(signal.SIGTERM, exit_handler.signal_handler)
-    signal.signal(signal.SIGKILL, exit_handler.signal_handler)
+    # signal.signal(signal.SIGKILL, exit_handler.signal_handler)
 
     # receivedMessage = get_messsage()
     # send_message(encode_message(receivedMessage))
-    while True:
-        message = incoming_message_queue.get()
-        if message == 'exit':
-            break;
 
-    exit_handler.signal_handler(None, None)
+    try:
+        while True:
+            message = incoming_message_queue.get()
+            if message == 'exit':
+                break;
+    finally:
+        exit_handler.signal_handler(None, None)
 
 
 if __name__ == "__main__":
