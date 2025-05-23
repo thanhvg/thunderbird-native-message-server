@@ -1,6 +1,9 @@
 import sys
 import json
 import struct
+import threading
+
+from pubsub import PubSub
 
 
 # Read a message from stdin and decode it.
@@ -45,4 +48,29 @@ def process_stdout(message_queue):
         send_message(encoded_message)
 
 
-    
+class ThunderBirdRequestSender:
+    def __init__(self, pub_sub: PubSub) -> None:
+        self.pub_sub = pub_sub
+        self.pub_sub.subscribe('TB_REQUEST', self.listen)
+
+    def listen(self, message):
+        encoded_message = encode_message(message)
+        send_message(encoded_message)
+
+
+class ThunderBirdRespondBroadcaster:
+    def __init__(self, pub_sub: PubSub) -> None:
+        self.pub_sub = pub_sub
+        self.process_stdin_thread = threading.Thread(target=self.process_stdin, daemon=True)
+
+    def process_stdin(self):
+        while True:
+            try:
+                message = get_messsage()
+                self.pub_sub.publish('TB_RESPONSE', message)
+
+            except Exception as e:
+                # Handle potential errors during message processing or encoding
+                print(f"Error processing stdin: {e}", file=sys.stderr)
+                sys.stderr.flush()  # Crucial to flush stderr too
+                break  # Exit the loop

@@ -3,15 +3,15 @@
 
 #!/usr/bin/env python3
 
-from stdio_processor import encode_message, get_messsage, process_stdin, process_stdout, send_message
-from web_server import run_server
+from pubsub import PubSub
+from stdio_processor import ThunderBirdRequestSender, ThunderBirdRespondBroadcaster, encode_message, get_messsage, process_stdin, process_stdout, send_message
+from web_server import run_server, start_server
 
 import argparse
 import queue
 import signal
 import sys
 from threading import Thread
-import time
 
 
 # Global flag to indicate whether to exit gracefully
@@ -37,12 +37,6 @@ class ExitHandler:
         self._stdin_thread.join(timeout=1)
         print("Exited gracefully.")
         sys.exit(0)
-
-# class ThunderBirdMessageHanler:
-#     def __init__(self, incoming_message: queue.Queue) -> None:
-#         self.__incoming_message_queue = incoming_message
-
-#     def 
 
 def main():
     """Main function to start the web server and stdin processor."""
@@ -88,8 +82,23 @@ def main():
         exit_handler.signal_handler(None, None)
 
 
+def main2():
+
+    parser = argparse.ArgumentParser(description="Web server and stdin processor.")
+    parser.add_argument("--port", type=int, default=1337, help="Port for the web server.")
+    args = parser.parse_args()
+
+    pub_sub = PubSub()
+    tb_req_sender = ThunderBirdRequestSender(pub_sub=pub_sub)
+    tb_res_broadcaster = ThunderBirdRespondBroadcaster(pub_sub=pub_sub)
+
+    # Start the web server in a separate thread
+    server_thread = Thread(target=start_server, args=(args.port, pub_sub))
+    # server_thread.daemon = True  # Allow the main thread to exit even if this thread is running
+    server_thread.start()
+
 if __name__ == "__main__":
     # Ensure stderr is not buffered
     # sys.stderr.reconfigure(line_buffering=True)
-    main()
+    main2()
 
