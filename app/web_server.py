@@ -1,14 +1,16 @@
 import http.server
 import socketserver
-from queue import Queue
+import queue
 import json
 from http import HTTPStatus
 
 from pubsub import PubSub
 
+import threading
+
 
 class JSONHandler(http.server.SimpleHTTPRequestHandler):
-    def __init__(self, *args, message_queue: Queue, **kwargs):
+    def __init__(self, *args, message_queue: queue.Queue, **kwargs):
         self.message_queue = message_queue
         super().__init__(*args, **kwargs)
 
@@ -43,6 +45,42 @@ class WebServer(http.server.SimpleHTTPRequestHandler):
         
         super().do_GET()
 
+    def do_POST(self):
+        if self.path == '/query-read-status':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            try:
+                data = json.loads(post_data.decode('utf-8'))
+                string_list = data.get('messages', [])  # Expecting a list of strings under the 'messages' key
+                self.pub_sub.publish('TB_REQUEST', {'type': 'query_read_status', 'payload': string_list})
+
+                # Expecting a list of strings under the  'messages' key
+                response_queue = queue.Queue()
+                callback = lambda message: response_queue.put(message)
+                self.pub_sub.subscribe('TB_RESPONSE', callback=callback)
+                self.pub_sub.publish('TB_REQUEST', {'type': 'query_read_status', 'payload': string_list})
+                response = response_queue.get(timeout=1000) 
+                self.pub_sub.unsubscribe('TB_RESPONSE', callback)
+                
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({'type': 'query_read_status', 'payload': response}).encode('utf-8'))
+
+            except json.JSONDecodeError:
+                self.send_response(400)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({'status': 'error', 'message': 'Invalid JSON'}).encode('utf-8'))
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({'status': 'error', 'message': str(e)}).encode('utf-8'))
+            return
+
+        self.send_response(404)
+        self.end_headers()
 
 def start_server(port, pub_sub: PubSub):
     """Runs a simple web server with JSON endpoint."""
