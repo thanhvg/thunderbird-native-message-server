@@ -62,6 +62,7 @@ class ThunderBirdRespondBroadcaster:
     def __init__(self, pub_sub: PubSub) -> None:
         self.pub_sub = pub_sub
         self.process_stdin_thread = threading.Thread(target=self.process_stdin, daemon=True)
+        self.process_stdin_thread.start()
 
     def process_stdin(self):
         while True:

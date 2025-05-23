@@ -265,3 +265,20 @@ srv -> client: {123: true, 456: false}
      `------'                 `------'                                                  `-----------'
 #+end_example
 
+* verb :verb:
+template http://localhost:1337
+** mid
+GET /mid/foo
+** query
+POST /query-read-status
+
+{
+  "messages": ["foo", "01000196fd573c22-d5eda9aa-75bc-4802-9edb-a8ff9643c412-000000@email.amazonses.com",
+  "68306ea9636f7_8a22ab0519830@ip-10-0-88-199.ec2.internal.mail"]
+}
+* manually kill server
+kill $(lsof -ti :1337)
+
+echo "hello" > /proc/$(lsof -ti :1337)/fd/0
+
+echo "hello" > /proc/987610/fd/0

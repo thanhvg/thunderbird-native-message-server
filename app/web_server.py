@@ -52,14 +52,13 @@ class WebServer(http.server.SimpleHTTPRequestHandler):
             try:
                 data = json.loads(post_data.decode('utf-8'))
                 string_list = data.get('messages', [])  # Expecting a list of strings under the 'messages' key
-                self.pub_sub.publish('TB_REQUEST', {'type': 'query_read_status', 'payload': string_list})
 
                 # Expecting a list of strings under the  'messages' key
                 response_queue = queue.Queue()
                 callback = lambda message: response_queue.put(message)
                 self.pub_sub.subscribe('TB_RESPONSE', callback=callback)
                 self.pub_sub.publish('TB_REQUEST', {'type': 'query_read_status', 'payload': string_list})
-                response = response_queue.get(timeout=1000) 
+                response = response_queue.get(timeout=5) 
                 self.pub_sub.unsubscribe('TB_RESPONSE', callback)
                 
                 self.send_response(200)

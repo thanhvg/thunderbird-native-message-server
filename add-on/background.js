@@ -7,13 +7,13 @@ On startup, connect to the "ping_pong" app.
 let port = browser.runtime.connectNative("run");
 
 console.log("starting: " + port);
-/*
-Listen for messages from the app and log them to the console.
-*/
-port.onMessage.addListener((response) => {
-  console.log("Received: " + JSON.stringify(response));
-  if (response.type === 'mid') {
-    messenger.messages.query({ headerMessageId: response.payload })
+
+port.onMessage.addListener((nativeAppMessage) => {
+  console.log("Received: " + JSON.stringify(nativeAppMessage));
+
+  // mid
+  if (nativeAppMessage.type === 'mid') {
+    messenger.messages.query({ headerMessageId: nativeAppMessage.payload })
       .then(result => {
       result.messages.forEach(msgHeader =>
         {
@@ -22,6 +22,30 @@ port.onMessage.addListener((response) => {
         });
     });
   }
+
+  //
+  if (nativeAppMessage.type === 'query_read_status') {
+    // payload = [mid]
+    let messagePromises = nativeAppMessage.payload.map(it => messenger.messages.query({ headerMessageId: it }))
+
+    Promise.all(messagePromises).then(
+      messageLists => {
+        let bag = {};
+        messageLists.forEach(({ messages }) => {
+          messages.forEach(it => {
+            bag[it.headerMessageId] = it.read
+          });
+        });
+        console.log(JSON.stringify(bag));
+        port.postMessage({
+          type: 'query_read_status',
+          payload: bag
+        });
+      }
+    )
+    
+  }
+
 });
 
 /*
