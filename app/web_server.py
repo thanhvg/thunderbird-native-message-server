@@ -1,3 +1,4 @@
+from email import message
 import http.server
 import socketserver
 import queue
@@ -58,13 +59,13 @@ class WebServer(http.server.SimpleHTTPRequestHandler):
                 callback = lambda message: response_queue.put(message)
                 self.pub_sub.subscribe('TB_RESPONSE', callback=callback)
                 self.pub_sub.publish('TB_REQUEST', {'type': 'query_read_status', 'payload': string_list})
-                response = response_queue.get(timeout=5) 
+                response = response_queue.get(timeout=60) 
                 self.pub_sub.unsubscribe('TB_RESPONSE', callback)
                 
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
-                self.wfile.write(json.dumps({'type': 'query_read_status', 'payload': response}).encode('utf-8'))
+                self.wfile.write(json.dumps(response).encode('utf-8'))
 
             except json.JSONDecodeError:
                 self.send_response(400)

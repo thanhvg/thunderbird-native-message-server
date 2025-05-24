@@ -326,6 +326,15 @@ POST /query-read-status
     }
   }
 }
+** query
+POST /query-read-status
+{"messages":["f5369196-ec65-45ee-8da1-9ec79099660b@pason.atlassian.net","bcf26e30-1068-4643-af0b-596ae33fe22b@pason.atlassian.net","42.E8.05983.7466F286@i-09d1a42aa745c4723.mta1vrest.sd.prd.sparkpost","01010196cfbd22a2-5a122fa0-3517-43cb-a153-f940b04889fd-000000@us-west-2.amazonses.com","01010196d04049e2-2d83e9e5-ef14-49db-9d2e-2210e236f925-000000@us-west-2.amazonses.com","01010196d040cfdc-80a2eb30-e637-4ff7-9897-ea037d65d5df-000000@us-west-2.amazonses.com","01010196d0451afd-db7fbf14-b3e3-44b3-a1ec-30928bb1fe1d-000000@us-west-2.amazonses.com","01010196d046065c-bf1f0934-819f-472b-951e-52fe791789c3-000000@us-west-2.amazonses.com","01010196d049a48c-9c7f6912-482a-49cf-af09-916f4e3bf3aa-000000@us-west-2.amazonses.com","01010196d0676d85-dd142a16-6b8d-4261-8e14-c579410058c1-000000@us-west-2.amazonses.com"]}
+
+** query
+POST /query-read-status
+
+{"messages":["f5369196-ec65-45ee-8da1-9ec79099660b@pason.atlassian.net","bcf26e30-1068-4643-af0b-596ae33fe22b@pason.atlassian.net"]}
+
 * manually kill server
 kill $(lsof -ti :1337)
 
