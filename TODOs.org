@@ -121,7 +121,6 @@ https://webextension-api.thunderbird.net/en/beta-mv2/messages.html#permissions
    nil)
   t)
 
-
 (setq mu4e-view-auto-mark-as-read #'mu4e/thunderbird-mark-as-read)
 #+end_src
 
@@ -245,6 +244,12 @@ mu4e-mark-execute-all
 mu4e-mark-execute-pre-hook to update on mark apply
 
 call this and header lists will update the status
+
+this will be expensive,
+
+thunderbird should support this but it didn't, it would be simple with maildir, append 2.S to the file
+
+take the first 100 unread messages then query against thunderbird for status
 
 #+begin_src elisp
 ;; with docid
