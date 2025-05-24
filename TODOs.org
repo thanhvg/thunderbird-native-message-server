@@ -194,6 +194,39 @@ The server output is as follows:
 
 mu4e-headers-append-func will do this 
 
+
+(defun mu4e/thunderbird-headers-append-func (msglst)
+  (mu4e~headers-append-handler msglst)
+
+
+  )
+
+
+
+(defun mu4e/collect-unread-message-ids (msglst)
+  "Collect the first 10 unread message-ids from MSGLST."
+  (let ((unread-ids '())
+        (count 0))
+    (dolist (msg msglst)
+      (when (and (<= count 9)
+                 (member 'unread (mu4e-message-field msg :flags)))
+        (push (mu4e-message-field msg :message-id) unread-ids)
+        (setq count (1+ count))))
+    (nreverse unread-ids)))
+
+(defun collect-unread-message-ids (msglst)
+  "Collect the first 10 unread message-ids from MSGLST."
+  (let ((unread-ids '()))
+        (count 0))
+    (cl-dolist (msg msglst)
+      (when (>= count 10)
+        (cl-return)) ; Exit dolist early
+
+      (when (member 'unread (plist-get msg :flags))
+        (push (plist-get msg :message-id) unread-ids)
+        (setq count (1+ count))))
+    (nreverse unread-ids))
+
 ** sync from thunderbird
 docid is not
 mu4e~headers-update-handler
@@ -275,6 +308,18 @@ POST /query-read-status
 {
   "messages": ["foo", "01000196fd573c22-d5eda9aa-75bc-4802-9edb-a8ff9643c412-000000@email.amazonses.com",
   "68306ea9636f7_8a22ab0519830@ip-10-0-88-199.ec2.internal.mail"]
+}
+*** return
+
+{
+  "type": "query_read_status",
+  "payload": {
+    "type": "query_read_status",
+    "payload": {
+      "01000196fd573c22-d5eda9aa-75bc-4802-9edb-a8ff9643c412-000000@email.amazonses.com": true,
+      "68306ea9636f7_8a22ab0519830@ip-10-0-88-199.ec2.internal.mail": true
+    }
+  }
 }
 * manually kill server
 kill $(lsof -ti :1337)
