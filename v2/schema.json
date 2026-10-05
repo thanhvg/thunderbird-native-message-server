@@ -1,0 +1,8 @@
+[
+  {
+    "namespace": "mu4eBridge",
+    "functions": [
+      { "name": "start", "type": "function", "async": true, "parameters": [] }
+    ]
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "mu4e bridge",
+  "version": "0.1.0",
+  "description": "Local bridge: lets mu4e sync flags to Thunderbird and compose through it",
+  "browser_specific_settings": {
+    "gecko": { "id": "mu4e-bridge@example.org", "strict_min_version": "128.0" }
+  },
+  "background": { "scripts": ["background.js"] },
+  "experiment_apis": {
+    "mu4eBridge": {
+      "schema": "api/schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "paths": [["mu4eBridge"]],
+        "script": "api/api.js"
+      }
+    }
+  }
+}
